@@ -21,6 +21,10 @@ class AuthenticatedSessionController extends Controller
         return Inertia::render('auth/Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => $request->session()->get('status'),
+            'telegram' => [
+                'bot' => config('services.telegram.bot'),
+                'redirect' => url(config('services.telegram.redirect')),
+            ],
         ]);
     }
 

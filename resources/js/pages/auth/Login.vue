@@ -8,10 +8,16 @@ import { Label } from '@/components/ui/label';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
+import TelegramLoginBtn from '@/components/TelegramLoginBtn.vue';
 
 defineProps<{
     status?: string;
     canResetPassword: boolean;
+    errors: Record<string, string>;
+    telegram: {
+        bot: string;
+        redirect: string;
+    };
 }>();
 
 const form = useForm({
@@ -34,6 +40,8 @@ const submit = () => {
         <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
             {{ status }}
         </div>
+
+        <InputError :message="errors.telegram" />
 
         <form @submit.prevent="submit" class="flex flex-col gap-6">
             <div class="grid gap-6">
@@ -82,6 +90,9 @@ const submit = () => {
                     <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
                     Log in
                 </Button>
+
+                <TelegramLoginBtn mode="redirect" :bot-username="telegram.bot" :redirect-url="telegram.redirect" />
+
             </div>
 
             <div class="text-center text-sm text-muted-foreground">

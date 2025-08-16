@@ -41,4 +41,10 @@ return [
         'client_secret' => env('TELEGRAM_TOKEN'),
         'redirect' => env('TELEGRAM_REDIRECT_URI'),
     ],
+
+    'upwork' => [
+        'client_id' => env('UPWORK_CLIENT_ID'),
+        'client_secret' => env('UPWORK_CLIENT_SECRET'),
+        'redirect_uri' => env('UPWORK_REDIRECT_URI'),
+    ],
 ];

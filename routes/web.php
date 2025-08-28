@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Services\UpworkProvider;
 use App\Services\UpworkService;
-use App\Http\Controllers\UpworkController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -41,8 +40,6 @@ Route::get('/oauth/upwork/callback', function (UpworkService $upwork) {
         return response()->json(['error' => $e->getMessage()], 500);
     }
 });
-
-Route::get('/upwork/pull', [UpworkController::class, 'pull']);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

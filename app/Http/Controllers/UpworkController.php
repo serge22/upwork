@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-// use App\Jobs\FindMatchingUsers;
+use App\Jobs\FindMatchingUsers;
 use Illuminate\Http\Request;
 use App\Services\UpworkService;
 use App\Models\UpworkJob;
@@ -21,7 +21,7 @@ class UpworkController extends Controller
             try {
                 $job = UpworkJob::createFromUpworkArray($j);
 
-                // FindMatchingUsers::dispatch($job->id);
+                FindMatchingUsers::dispatch($job->id);
             } catch (UniqueConstraintViolationException $e) {
                 break;
             }

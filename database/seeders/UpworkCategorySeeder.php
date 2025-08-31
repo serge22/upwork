@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\UpworkCategory;
 use App\Services\UpworkService;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
 class UpworkCategorySeeder extends Seeder
@@ -15,16 +15,17 @@ class UpworkCategorySeeder extends Seeder
     {
         $upwork = app(UpworkService::class);
         $categories = $upwork->getCategories();
-        foreach ($categories as $category)
-        {
-            DB::table('upwork_categories')->insert([
+
+        foreach ($categories as $category) {
+            // Create parent category
+            UpworkCategory::create([
                 'id' => $category['id'],
                 'label' => $category['preferredLabel'],
             ]);
 
-            foreach ($category['subcategories'] as $child)
-            {
-                DB::table('upwork_categories')->insert([
+            // Create subcategories
+            foreach ($category['subcategories'] as $child) {
+                UpworkCategory::create([
                     'id' => $child['id'],
                     'parent_id' => $category['id'],
                     'label' => $child['preferredLabel'],

@@ -29,7 +29,7 @@ class FindMatchingUsers implements ShouldQueue
      */
     public function handle(): void
     {
-        $job = UpworkJob::find($this->jobId);
+        $job = UpworkJob::with(['subcategoryModel'])->find($this->jobId);
         $telegramService = new TelegramNotificationService();
 
         Feed::where('is_active', '=', 1)

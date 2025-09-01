@@ -68,14 +68,51 @@ class TelegramNotificationService
     {
         $message = "<b>{$job->title}</b>\n\n";
 
-        $message .= $this->formatClientInfo($job);
+        $message .= $this->formatJobDetails($job) . "\n\n";
+        $message .= $this->formatClientInfo($job) . "\n\n";
 
-        $message .= "\n<b>Description:</b>\n";
+        $message .= "<b>Description:</b>\n";
         $message .= "<blockquote expandable>" . strip_tags($job->description) . "</blockquote>\n\n";
 
         $message .= "\n🔗 <b>View Job:</b> https://www.upwork.com/jobs/{$job->ciphertext}";
 
         return $message;
+    }
+
+    private function formatJobDetails(UpworkJob $job): string
+    {
+        $details = [];
+
+        if ($job->subcategoryModel) {
+            $details[] = $job->subcategoryModel->label;
+        }
+
+        if ($job->amount) {
+            $details[] = 'Fixed-price';
+            $details[] = "<b>\${$job->amount}</b>";
+        }
+
+        if ($job->hourlyBudgetType) {
+            $details[] = 'Hourly';
+        }
+
+        if ($job->hourlyBudgetMax) {
+            $details[] = sprintf('<b>$%d-$%d per hour</b>', $job->hourlyBudgetMin, $job->hourlyBudgetMax);
+        }
+
+        if ($job->engagement) {
+            $details[] = $job->engagement;
+        }
+
+        if ($job->experience) {
+            $details[] = $job->experience;
+        }
+
+        if ($job->premium) {
+            $details[] = "💎 Featured";
+        }
+
+        return implode(" | ", $details);
     }
 
     private function formatClientInfo(UpworkJob $job): string
@@ -109,7 +146,7 @@ class TelegramNotificationService
 
         if ($aboutClient) {
             $out = "<b>About Client</b>\n";
-            $out .= implode(" | ", $aboutClient) . "\n";
+            $out .= implode(" | ", $aboutClient);
         }
 
         return $out;

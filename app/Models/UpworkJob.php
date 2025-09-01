@@ -13,6 +13,16 @@ class UpworkJob extends Model
 
     protected $keyType = 'string';
 
+    public function categoryModel()
+    {
+        return $this->belongsTo(UpworkCategory::class, 'category', 'slug');
+    }
+
+    public function subcategoryModel()
+    {
+        return $this->belongsTo(UpworkCategory::class, 'subcategory', 'slug');
+    }
+
 
     /**
      * Create a new instance from an array and save it.
@@ -26,10 +36,16 @@ class UpworkJob extends Model
             'id' => $data['id'],
             'title' => $data['title'],
             'description' => $data['description'],
+            'category' => $data['category'],
+            'subcategory' => $data['subcategory'],
             'ciphertext' => $data['ciphertext'],
             'duration' => $data['durationLabel'],
             'engagement' => $data['engagement'],
             'amount' => $data['amount']['displayValue'] ?? null,
+            'hourlyBudgetType' => $data['hourlyBudgetType'],
+            'hourlyBudgetMin' => $data['hourlyBudgetMin']['displayValue'] ?? null,
+            'hourlyBudgetMax' => $data['hourlyBudgetMax']['displayValue'] ?? null,
+            'premium' => $data['premium'],
             'experience' => $data['experienceLevel'],
 
             'client_hires' => $data['client']['totalHires'],

@@ -16,7 +16,7 @@ class FetchUpworkJobs extends Command
      *
      * @var string
      */
-    protected $signature = 'upwork:fetch-jobs {--limit=100 : Number of jobs to fetch}';
+    protected $signature = 'upwork:fetch-jobs {--limit=50 : Number of jobs to fetch}';
 
     /**
      * The console command description.

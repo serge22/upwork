@@ -4,19 +4,10 @@ namespace App\Services;
 
 use App\Models\UpworkJob;
 use App\Models\Feed;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Telegram\Bot\Api;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class TelegramNotificationService
 {
-    protected Api $telegram;
-
-    public function __construct()
-    {
-        $this->telegram = new Api();
-    }
-
     /**
      * Send a job notification to a user via Telegram
      */
@@ -24,7 +15,7 @@ class TelegramNotificationService
     {
         $message = $this->formatJobMessage($job, $feed);
 
-        $response = $this->telegram->sendMessage(['chat_id' => $telegramId, 'text' => $message, 'parse_mode' => 'HTML', 'disable_web_page_preview' => true]);
+        $response = Telegram::sendMessage(['chat_id' => $telegramId, 'text' => $message, 'parse_mode' => 'HTML', 'disable_web_page_preview' => true]);
         return $response->getMessageId() !== null;
     }
 

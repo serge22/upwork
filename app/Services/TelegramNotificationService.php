@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\UpworkJob;
 use App\Models\Feed;
+use Illuminate\Support\Number;
 use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
@@ -107,12 +108,12 @@ class TelegramNotificationService
             $aboutClient[] = intval($job->client_jobs) . " jobs";
         }
 
-        if ($job->client_verified) {
-            $aboutClient[] = "✅ Verified";
+        if ($job->client_spent) {
+            $aboutClient[] = "Spent &#36;" . Number::abbreviate($job->client_spent);
         }
 
-        if ($job->client_spent) {
-            $aboutClient[] = "Spent: &#36;" . intval($job->client_spent);
+        if ($job->client_verified) {
+            $aboutClient[] = "✅ Verified";
         }
 
         if ($aboutClient) {

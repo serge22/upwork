@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\UpworkJob;
 use App\Models\Feed;
+use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 class TelegramNotificationService
@@ -13,9 +14,23 @@ class TelegramNotificationService
      */
     public function sendJobNotification(string $telegramId, UpworkJob $job, Feed $feed): bool
     {
-        $message = $this->formatJobMessage($job, $feed);
+        $reply_markup = Keyboard::make()
+            ->inline()
+            ->row([
+                Keyboard::inlineButton([
+                    'text' => 'Open job',
+                    'url' => 'https://www.upwork.com/jobs/' . $job->ciphertext,
+                ])
+            ]);
 
-        $response = Telegram::sendMessage(['chat_id' => $telegramId, 'text' => $message, 'parse_mode' => 'HTML', 'disable_web_page_preview' => true]);
+        $params = [
+            'chat_id' => $telegramId,
+            'text' => $this->formatJobMessage($job, $feed),
+            'parse_mode' => 'HTML',
+            'disable_web_page_preview' => true,
+            'reply_markup' => $reply_markup,
+        ];
+        $response = Telegram::sendMessage($params);
         return $response->getMessageId() !== null;
     }
 
@@ -30,9 +45,7 @@ class TelegramNotificationService
         $message .= $this->formatClientInfo($job) . "\n\n";
 
         $message .= "<b>Description:</b>\n";
-        $message .= "<blockquote expandable>" . strip_tags($job->description) . "</blockquote>\n\n";
-
-        $message .= "\n🔗 <b>View Job:</b> https://www.upwork.com/jobs/{$job->ciphertext}";
+        $message .= "<blockquote expandable>" . strip_tags($job->description) . "</blockquote>";
 
         return $message;
     }

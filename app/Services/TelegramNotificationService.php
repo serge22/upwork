@@ -6,16 +6,15 @@ use App\Models\UpworkJob;
 use App\Models\Feed;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Telegram\Bot\Api;
 
 class TelegramNotificationService
 {
-    private string $botToken;
-    private string $baseUrl;
+    protected Api $telegram;
 
     public function __construct()
     {
-        $this->botToken = config('services.telegram.client_secret');
-        $this->baseUrl = "https://api.telegram.org/bot{$this->botToken}";
+        $this->telegram = new Api();
     }
 
     /**
@@ -25,40 +24,8 @@ class TelegramNotificationService
     {
         $message = $this->formatJobMessage($job, $feed);
 
-        return $this->sendMessage($telegramId, $message);
-    }
-
-    /**
-     * Send a message to a Telegram user
-     */
-    private function sendMessage(string $telegramId, string $message): bool
-    {
-        try {
-            $response = Http::post("{$this->baseUrl}/sendMessage", [
-                'chat_id' => $telegramId,
-                'text' => $message,
-                'parse_mode' => 'HTML',
-                'disable_web_page_preview' => true,
-            ]);
-
-            if ($response->successful()) {
-                return true;
-            }
-
-            Log::warning('Failed to send Telegram message', [
-                'telegram_id' => $telegramId,
-                'response' => $response->json(),
-            ]);
-
-            return false;
-        } catch (\Exception $e) {
-            Log::error('Exception sending Telegram message', [
-                'telegram_id' => $telegramId,
-                'error' => $e->getMessage(),
-            ]);
-
-            return false;
-        }
+        $response = $this->telegram->sendMessage(['chat_id' => $telegramId, 'text' => $message, 'parse_mode' => 'HTML', 'disable_web_page_preview' => true]);
+        return $response->getMessageId() !== null;
     }
 
     /**

@@ -4,15 +4,21 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Services\UpworkProvider;
 use App\Services\UpworkService;
+use App\Http\Controllers\FeedController;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
-})->name('home');
+});
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Feed Routes
+Route::middleware(['auth'])->group(function () {
+    Route::resource('feeds', FeedController::class)->name('index', 'home');
+});
 
 Route::get('/oauth/upwork', function () {
     $provider = new UpworkProvider();
@@ -22,6 +28,12 @@ Route::get('/oauth/upwork', function () {
     session(['oauth2state' => $provider->getState()]);
 
     return redirect($authorizationUrl);
+});
+
+Route::post(config('telegram.bots.mybot.token') . '/webhook', function () {
+    $update = Telegram::commandsHandler(true);
+
+    return 'ok';
 });
 
 Route::get('/oauth/upwork/callback', function (UpworkService $upwork) {

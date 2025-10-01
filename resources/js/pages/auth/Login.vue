@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
@@ -6,9 +7,26 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthBase from '@/layouts/AuthLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, router } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
 import TelegramLoginBtn from '@/components/TelegramLoginBtn.vue';
+
+declare global {
+    interface Window {
+        Telegram?: {
+            WebApp?: {
+                initData: string;
+                ready: () => void;
+                MainButton: {
+                    text: string;
+                    show: () => void;
+                    onClick: (callback: () => void) => void;
+                };
+                // Add other properties as needed
+            };
+        };
+    }
+}
 
 defineProps<{
     status?: string;
@@ -31,6 +49,33 @@ const submit = () => {
         onFinish: () => form.reset('password'),
     });
 };
+
+// Add Telegram Web App script
+onMounted(() => {
+    const script = document.createElement('script');
+    script.src = 'https://telegram.org/js/telegram-web-app.js';
+    script.async = true;
+    script.onload = () => {
+        // Initialize Telegram WebApp after script loads
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.ready();
+            checkTelegramAuth();
+        }
+    };
+    document.head.appendChild(script);
+});
+
+// handle Telegram auth
+const checkTelegramAuth = () => {
+    if (window.Telegram?.WebApp?.initData && window.Telegram.WebApp.initData.length > 0) {
+        router.post(route('login.telegram'), {
+            telegramData: window.Telegram.WebApp.initData,
+        });
+    } else {
+        console.log('No Telegram auth data available');
+    }
+};
+
 </script>
 
 <template>
@@ -91,7 +136,7 @@ const submit = () => {
                     Log in
                 </Button>
 
-                <TelegramLoginBtn mode="redirect" :bot-username="telegram.bot" :redirect-url="telegram.redirect" />
+<!--                <TelegramLoginBtn mode="redirect" :bot-username="telegram.bot" :redirect-url="telegram.redirect" />-->
 
             </div>
 

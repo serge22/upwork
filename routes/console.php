@@ -3,7 +3,8 @@
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
-Schedule::command('upwork:fetch-jobs')->everyTwoMinutes()->withoutOverlapping();
+Schedule::command('app:fetch-jobs')->everyTwoMinutes()->withoutOverlapping();
+Schedule::command('app:cleanup-old-jobs')->daily();
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());

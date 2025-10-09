@@ -49,7 +49,7 @@ class TelegramNotificationService
         $description = strip_tags($job->description);
 
         // Calculate remaining space for description (9000 char limit total)
-        $maxLength = 9000;
+        $maxLength = 8000;
         $currentLength = mb_strlen($message) + mb_strlen("<blockquote expandable></blockquote>");
         $availableSpace = $maxLength - $currentLength;
 

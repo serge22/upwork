@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Feed;
+use App\Models\UpworkCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class FeedController extends Controller
 {
@@ -25,7 +27,7 @@ class FeedController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Feeds/Create');
     }
 
     /**
@@ -33,7 +35,19 @@ class FeedController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'search_query' => 'array',
+        ]);
+
+        $feed = Feed::create([
+            'user_id' => auth()->id(),
+            'name' => $validated['name'],
+            'search_query' => $validated['search_query'] ?? [],
+            'is_active' => true,
+        ]);
+
+        return redirect()->route('feeds.index')->with('success', 'Feed created successfully!');
     }
 
     /**
@@ -49,7 +63,13 @@ class FeedController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $feed = Feed::where('id', $id)
+                   ->where('user_id', auth()->id())
+                   ->firstOrFail()
+                   ->only(['id', 'name', 'search_query']);
+        return Inertia::render('Feeds/Edit', [
+            'feed' => $feed,
+        ]);
     }
 
     /**
@@ -57,7 +77,21 @@ class FeedController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'search_query' => 'array',
+        ]);
+
+        $feed = Feed::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $feed->update([
+            'name' => $validated['name'],
+            'search_query' => $validated['search_query'] ?? [],
+        ]);
+
+        return redirect()->route('feeds.index')->with('success', 'Feed updated successfully!');
     }
 
     /**
@@ -65,6 +99,12 @@ class FeedController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $feed = Feed::where('id', $id)
+                   ->where('user_id', auth()->id())
+                   ->firstOrFail();
+
+        $feed->delete();
+
+        return redirect()->route('feeds.index')->with('success', 'Feed deleted successfully!');
     }
 }

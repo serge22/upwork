@@ -45,6 +45,12 @@ const deleteFeed = (id: number) => {
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-4">
+            <div class="mb-4">
+                <Button as-child>
+                    <a :href="route('feeds.create')">New Feed</a>
+                </Button>
+            </div>
+            
             <div v-if="feeds.length === 0" class="text-center py-8 text-gray-500">
                 No feeds found. Create your first feed to get started!
             </div>
@@ -56,11 +62,13 @@ const deleteFeed = (id: number) => {
                         </CardHeader>
                         <CardContent>qwerty</CardContent>
                         <CardFooter class="space-x-2">
-                            <Button variant="outline">
-                                <Pencil class="w-4 h-4 mr-2" />
-                                Edit
+                            <Button variant="outline" as-child>
+                                <a :href="route('feeds.edit', feed.id)">
+                                    <Pencil class="w-4 h-4 mr-2" />
+                                    Edit
+                                </a>
                             </Button>
-                            <Button variant="destructive">
+                            <Button variant="outline" @click="deleteFeed(feed.id)">
                                 <Trash class="w-4 h-4 mr-2" />
                                 Delete
                             </Button>

@@ -17,7 +17,9 @@ Route::get('dashboard', function () {
 
 // Feed Routes
 Route::middleware(['auth'])->group(function () {
-    Route::resource('feeds', FeedController::class);
+    Route::resource('feeds', FeedController::class)->names([
+        'index' => 'home',
+    ]);;
 });
 
 Route::get('/oauth/upwork', function () {

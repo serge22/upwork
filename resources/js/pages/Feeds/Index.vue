@@ -55,7 +55,7 @@ const deleteFeed = (id: number) => {
                 No feeds found. Create your first feed to get started!
             </div>
             <div v-else class="space-y-4">
-                <template v-for="feed in feeds">
+                <template v-for="feed in feeds" :key="feed.id">
                     <Card>
                         <CardHeader>
                             <CardTitle>{{ feed.name }}</CardTitle>

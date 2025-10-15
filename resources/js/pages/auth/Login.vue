@@ -9,7 +9,6 @@ import { Label } from '@/components/ui/label';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
-import TelegramLoginBtn from '@/components/TelegramLoginBtn.vue';
 
 declare global {
     interface Window {

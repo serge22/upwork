@@ -12,6 +12,7 @@
             >
               <TagsInputItem
                 v-for="value in internalValue"
+                :key="value"
                 :value="value"
               >
                 <TagsInputItemText>{{ getOptionLabel(value) }}</TagsInputItemText>

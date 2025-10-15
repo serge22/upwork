@@ -49,7 +49,7 @@
 import { Label } from "@/components/ui/label"
 import { Button } from '@/components/ui/button';
 import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from "@/components/ui/tags-input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SelectTags from "./SelectTags.vue";
 
 const props = defineProps<{

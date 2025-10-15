@@ -11,7 +11,7 @@ const props = defineProps({
     botUsername: {
         type: String,
         required: true,
-        validator: (prop: String) => prop.endsWith('bot') || prop.endsWith('Bot'),
+        validator: (prop: string) => prop.endsWith('bot') || prop.endsWith('Bot'),
     },
     redirectUrl: {
         type: String,

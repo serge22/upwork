@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { PropType } from 'vue'
-import { onMounted, ref } from 'vue'
+import type { PropType } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const props = defineProps({
     mode: {
@@ -21,40 +21,38 @@ const props = defineProps({
         type: String as PropType<Size>,
         default: 'large' as Size,
         validator: (prop: Size) => ['small', 'medium', 'large'].includes(prop),
-    }
-})
+    },
+});
 
-const emit = defineEmits(['callback'])
+const emit = defineEmits(['callback']);
 
-type Mode = 'callback' | 'redirect'
-type Size = 'small' | 'medium' | 'large'
+type Mode = 'callback' | 'redirect';
+type Size = 'small' | 'medium' | 'large';
 
-const button = ref()
+const button = ref();
 
 const onTelegramAuth = (user: any) => {
-  emit('callback', user)
-}
+    emit('callback', user);
+};
 
 onMounted(() => {
     const script = document.createElement('script');
     script.src = 'https://telegram.org/js/telegram-widget.js?22';
     script.async = true;
-    script.setAttribute('data-size', props.size)
-    script.setAttribute('data-telegram-login', props.botUsername)
-    script.setAttribute('data-userpic', 'false')
-    script.setAttribute('data-radius', '6')
-    script.setAttribute('data-request-access', 'write')
+    script.setAttribute('data-size', props.size);
+    script.setAttribute('data-telegram-login', props.botUsername);
+    script.setAttribute('data-userpic', 'false');
+    script.setAttribute('data-radius', '6');
+    script.setAttribute('data-request-access', 'write');
     if (props.mode === ('callback' as Mode)) {
-        (window as any).onTelegramAuth = onTelegramAuth
-        script.setAttribute('data-onauth', 'window.onTelegramAuth(user)')
-    }
-    else {
-        script.setAttribute('data-auth-url', props.redirectUrl)
+        (window as any).onTelegramAuth = onTelegramAuth;
+        script.setAttribute('data-onauth', 'window.onTelegramAuth(user)');
+    } else {
+        script.setAttribute('data-auth-url', props.redirectUrl);
     }
     document.body.appendChild(script);
 
-    if (button.value)
-        button.value.appendChild(script)
+    if (button.value) button.value.appendChild(script);
 });
 </script>
 

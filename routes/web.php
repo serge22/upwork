@@ -19,7 +19,8 @@ Route::get('dashboard', function () {
 Route::middleware(['auth'])->group(function () {
     Route::resource('feeds', FeedController::class)->names([
         'index' => 'home',
-    ]);;
+    ]);
+    Route::patch('/feeds/{id}/toggle', [FeedController::class, 'toggle'])->name('feeds.toggle');
 });
 
 Route::get('/oauth/upwork', function () {

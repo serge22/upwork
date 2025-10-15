@@ -6,7 +6,6 @@ use App\Models\Feed;
 use App\Models\UpworkCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Auth;
 
 class FeedController extends Controller
 {
@@ -106,5 +105,20 @@ class FeedController extends Controller
         $feed->delete();
 
         return redirect()->route('feeds.index')->with('success', 'Feed deleted successfully!');
+    }
+
+    /**
+     * Toggle feed active status.
+     */
+    public function toggle(string $id)
+    {
+        $feed = Feed::where('id', $id)
+                   ->where('user_id', auth()->id())
+                   ->firstOrFail();
+
+        $feed->update(['is_active' => !$feed->is_active]);
+
+        $status = $feed->is_active ? 'resumed' : 'paused';
+        return back()->with('success', "Feed {$status} successfully!");
     }
 }

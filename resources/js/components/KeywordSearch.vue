@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-for="(item, index) in modelValue" :key="index" class="mb-4 p-2 space-y-4 border rounded">
+        <div v-for="(item, index) in modelValue" :key="index" class="mb-4 space-y-4 rounded border p-2">
             <div class="grid w-full max-w-sm items-center gap-1.5">
                 <Label>Keywords</Label>
 
@@ -13,7 +13,7 @@
                     <TagsInputInput placeholder="Enter keywords" />
                 </TagsInput>
             </div>
-            
+
             <div class="grid w-full max-w-sm items-center gap-1.5">
                 <Label for="condition">Condition</Label>
                 <Select v-model="item.condition">
@@ -30,13 +30,20 @@
 
             <div class="grid w-full max-w-sm items-center gap-1.5">
                 <Label for="location">Location</Label>
-                <SelectTags
-                    v-model="item.location"
-                    :options="locationOptions"
-                    placeholder="Anywhere" />
+                <SelectTags v-model="item.location" :options="locationOptions" placeholder="Anywhere" />
             </div>
 
-            <Button @click="emit('update:modelValue', modelValue.filter((_, i) => i !== index))" type="button" variant="outline" class="mt-2">
+            <Button
+                @click="
+                    emit(
+                        'update:modelValue',
+                        modelValue.filter((_, i) => i !== index),
+                    )
+                "
+                type="button"
+                variant="outline"
+                class="mt-2"
+            >
                 Remove condition
             </Button>
         </div>
@@ -46,11 +53,11 @@
 </template>
 
 <script setup lang="ts">
-import { Label } from "@/components/ui/label"
 import { Button } from '@/components/ui/button';
-import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from "@/components/ui/tags-input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import SelectTags from "./SelectTags.vue";
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input';
+import SelectTags from './SelectTags.vue';
 
 const props = defineProps<{
     modelValue: Array<{

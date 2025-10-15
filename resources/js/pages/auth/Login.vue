@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
@@ -7,8 +6,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthBase from '@/layouts/AuthLayout.vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
+import { onMounted } from 'vue';
 
 declare global {
     interface Window {
@@ -74,7 +74,6 @@ const checkTelegramAuth = () => {
         console.log('No Telegram auth data available');
     }
 };
-
 </script>
 
 <template>
@@ -135,8 +134,7 @@ const checkTelegramAuth = () => {
                     Log in
                 </Button>
 
-<!--                <TelegramLoginBtn mode="redirect" :bot-username="telegram.bot" :redirect-url="telegram.redirect" />-->
-
+                <!--                <TelegramLoginBtn mode="redirect" :bot-username="telegram.bot" :redirect-url="telegram.redirect" />-->
             </div>
 
             <div class="text-center text-sm text-muted-foreground">

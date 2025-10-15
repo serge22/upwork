@@ -1,16 +1,10 @@
 <script setup lang="ts">
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardContent,
-    CardFooter,
-} from "@/components/ui/card";
-import { Button } from '@/components/ui/button';
-import { Trash, Pencil } from "lucide-vue-next"
+import { Pause, Pencil, Play, Trash } from 'lucide-vue-next';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -38,6 +32,13 @@ const deleteFeed = (id: number) => {
         router.delete(route('feeds.destroy', id));
     }
 };
+
+const toggleFeedActive = (feed: Feed) => {
+    // You may want to use a PATCH request to update is_active
+    router.patch(route('feeds.toggle', feed.id), {
+        is_active: !feed.is_active,
+    });
+};
 </script>
 
 <template>
@@ -50,10 +51,8 @@ const deleteFeed = (id: number) => {
                     <a :href="route('feeds.create')">New Feed</a>
                 </Button>
             </div>
-            
-            <div v-if="feeds.length === 0" class="text-center py-8 text-gray-500">
-                No feeds found. Create your first feed to get started!
-            </div>
+
+            <div v-if="feeds.length === 0" class="py-8 text-center text-gray-500">No feeds found. Create your first feed to get started!</div>
             <div v-else class="space-y-4">
                 <template v-for="feed in feeds" :key="feed.id">
                     <Card>
@@ -64,12 +63,16 @@ const deleteFeed = (id: number) => {
                         <CardFooter class="space-x-2">
                             <Button variant="outline" as-child>
                                 <a :href="route('feeds.edit', feed.id)">
-                                    <Pencil class="w-4 h-4 mr-2" />
+                                    <Pencil class="mr-2 h-4 w-4" />
                                     Edit
                                 </a>
                             </Button>
+                            <Button variant="outline" @click="toggleFeedActive(feed)">
+                                <component :is="feed.is_active ? Pause : Play" class="mr-2 h-4 w-4" />
+                                {{ feed.is_active ? 'Pause' : 'Play' }}
+                            </Button>
                             <Button variant="outline" @click="deleteFeed(feed.id)">
-                                <Trash class="w-4 h-4 mr-2" />
+                                <Trash class="mr-2 h-4 w-4" />
                                 Delete
                             </Button>
                         </CardFooter>

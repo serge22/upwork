@@ -50,11 +50,15 @@ import InputError from '@/components/InputError.vue';
 import KeywordSearch from '@/components/KeywordSearch.vue';
 
 type Feed = {
-  id: number;
-  name: string;
-  search_query: string[];
+    id: number;
+    name: string;
+    search_query: Array<{
+        keywords: string[],
+        location: string[],
+        condition: string,
+    }>,
 };
-const props = defineProps<{ feed?: Feed }>();
+const props = defineProps<{ feed: Feed }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

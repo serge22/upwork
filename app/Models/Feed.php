@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Feed extends Model
 {
@@ -24,17 +25,29 @@ class Feed extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(UpworkCategory::class, 'feed_categories', 'feed_id', 'upwork_category_id');
+    }
+
     public function matchesJob(UpworkJob $job): bool
     {
         if (!$this->is_active) {
             return false;
         }
 
-        // If no search rules defined, match all jobs
+        // Check if job matches selected categories (if any categories are selected)
+        if ($this->categories()->count() > 0) {
+            $feedCategoryIds = $this->categories()->pluck('id')->toArray();
+            if (!in_array($job->upwork_category_id, $feedCategoryIds)) {
+                return false;
+            }
+        }
+
+        // If no search rules defined, match all jobs (that pass category filter)
         if (empty($this->search_query)) {
             return true;
         }
-
 
         if ($this->search_query) {
             foreach ($this->search_query as $rule) {
@@ -92,7 +105,7 @@ class Feed extends Model
             match($location) {
                 'title' => $texts[] = $job->title,
                 'description' => $texts[] = $job->description,
-                'category' => $texts[] = $job->category,
+                'category' => $texts[] = $job->category?->label ?? '',
                 default => null
             };
         }

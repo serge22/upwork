@@ -32,6 +32,7 @@ return new class extends Migration
             $table->dropColumn('hourlyBudgetType');
             $table->dropColumn('hourlyBudgetMin');
             $table->dropColumn('hourlyBudgetMax');
+            $table->dropColumn('premium');
         });
     }
 };

@@ -69,7 +69,7 @@ const toggleFeedActive = (feed: Feed) => {
                             </Button>
                             <Button variant="outline" @click="toggleFeedActive(feed)">
                                 <component :is="feed.is_active ? Pause : Play" class="mr-2 h-4 w-4" />
-                                {{ feed.is_active ? 'Pause' : 'Play' }}
+                                {{ feed.is_active ? 'Pause' : 'Resume' }}
                             </Button>
                             <Button variant="outline" @click="deleteFeed(feed.id)">
                                 <Trash class="mr-2 h-4 w-4" />

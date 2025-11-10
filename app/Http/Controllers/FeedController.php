@@ -26,7 +26,14 @@ class FeedController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Feeds/Create');
+        $categories = UpworkCategory::select('id', 'parent_id', 'label')
+            ->orderBy('label')
+            ->get();
+
+        return Inertia::render('Feeds/FeedForm', [
+            'feed' => new Feed,
+            'categories' => $categories,
+        ]);
     }
 
     /**
@@ -36,6 +43,8 @@ class FeedController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'category_ids' => 'nullable|array',
+            'category_ids.*' => 'exists:upwork_categories,id',
             'search_query' => 'array',
         ]);
 
@@ -45,6 +54,11 @@ class FeedController extends Controller
             'search_query' => $validated['search_query'] ?? [],
             'is_active' => true,
         ]);
+
+        // Attach selected categories
+        if (!empty($validated['category_ids'])) {
+            $feed->categories()->sync($validated['category_ids']);
+        }
 
         return redirect()->route('feeds.index')->with('success', 'Feed created successfully!');
     }
@@ -64,10 +78,21 @@ class FeedController extends Controller
     {
         $feed = Feed::where('id', $id)
                    ->where('user_id', auth()->id())
-                   ->firstOrFail()
-                   ->only(['id', 'name', 'search_query']);
-        return Inertia::render('Feeds/Edit', [
-            'feed' => $feed,
+                   ->with('categories')
+                   ->firstOrFail();
+
+        $categories = UpworkCategory::select('id', 'parent_id', 'label')
+            ->orderBy('label')
+            ->get();
+
+        return Inertia::render('Feeds/FeedForm', [
+            'feed' => [
+                'id' => $feed->id,
+                'name' => $feed->name,
+                'category_ids' => $feed->categories->pluck('id')->toArray(),
+                'search_query' => $feed->search_query,
+            ],
+            'categories' => $categories,
         ]);
     }
 
@@ -78,6 +103,8 @@ class FeedController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'category_ids' => 'nullable|array',
+            'category_ids.*' => 'exists:upwork_categories,id',
             'search_query' => 'array',
         ]);
 
@@ -89,6 +116,9 @@ class FeedController extends Controller
             'name' => $validated['name'],
             'search_query' => $validated['search_query'] ?? [],
         ]);
+
+        // Sync selected categories
+        $feed->categories()->sync($validated['category_ids'] ?? []);
 
         return redirect()->route('feeds.index')->with('success', 'Feed updated successfully!');
     }

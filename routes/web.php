@@ -9,7 +9,7 @@ use Telegram\Bot\Laravel\Facades\Telegram;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
-});
+})->name('home');
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
@@ -17,9 +17,7 @@ Route::get('dashboard', function () {
 
 // Feed Routes
 Route::middleware(['auth'])->group(function () {
-    Route::resource('feeds', FeedController::class)->names([
-        'index' => 'home',
-    ]);
+    Route::resource('feeds', FeedController::class);
     Route::patch('/feeds/{id}/toggle', [FeedController::class, 'toggle'])->name('feeds.toggle');
 });
 

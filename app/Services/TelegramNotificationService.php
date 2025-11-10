@@ -48,8 +48,8 @@ class TelegramNotificationService
         $message .= "<b>Description:</b>\n";
         $description = strip_tags($job->description);
 
-        // Calculate remaining space for description (9000 char limit total)
-        $maxLength = 8000;
+        // Calculate remaining space for description (4000 char limit total)
+        $maxLength = 4000;
         $currentLength = mb_strlen($message) + mb_strlen("<blockquote expandable></blockquote>");
         $availableSpace = $maxLength - $currentLength;
 
@@ -59,7 +59,7 @@ class TelegramNotificationService
 
         $message .= "<blockquote expandable>" . $description . "</blockquote>";
 
-        // Final safety check to ensure we don't exceed 9000 characters
+        // Final safety check to ensure we don't exceed 4000 characters
         if (mb_strlen($message) > $maxLength) {
             $message = mb_substr($message, 0, $maxLength - 3) . '...';
         }
@@ -71,8 +71,8 @@ class TelegramNotificationService
     {
         $details = [];
 
-        if ($job->subcategoryModel) {
-            $details[] = $job->subcategoryModel->label;
+        if ($job->category) {
+            $details[] = $job->category->label;
         }
 
         if ($job->amount) {

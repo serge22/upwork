@@ -16,6 +16,12 @@ class UpworkCategory extends Model
         'slug'
     ];
 
+    // cast IDs to string because of issues with big integers in JavaScript
+    protected $casts = [
+        'id' => 'string',
+        'parent_id' => 'string',
+    ];
+
     /**
      * Boot the model.
      */

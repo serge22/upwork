@@ -1,0 +1,4 @@
+#!/command/execlineb -P
+s6-setuidgid www-data
+cd /var/www/html
+php /var/www/html/artisan schedule:work

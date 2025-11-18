@@ -1,0 +1,53 @@
+#!/command/execlineb -P
+
+foreground { s6-echo "[laravel-init] Waiting for database..." }
+
+# Ensure cached config is cleared so .env is read during the DB check
+foreground { s6-echo "[laravel-init] Pre-clearing config cache before DB check..." }
+foreground { s6-setuidgid www-data php /var/www/html/artisan config:clear }
+
+foreground {
+    s6-setuidgid www-data /bin/sh -c "
+        max_attempts=30
+        attempt=0
+        while [ \$attempt -lt \$max_attempts ]; do
+            attempt=\$((attempt + 1))
+            echo \"[laravel-init] Attempt \$attempt/\$max_attempts - Testing database connection...\"
+            
+            # Try a simple database connection test first
+            if php /var/www/html/artisan db:show >/dev/null 2>&1; then
+                echo '[laravel-init] Database connection successful'
+                # Give it one more second to fully stabilize
+                sleep 1
+                exit 0
+            fi
+            
+            echo \"[laravel-init] Database not ready, waiting...\"
+            sleep 2
+        done
+        echo \"[laravel-init] Database timeout after \$max_attempts attempts\"
+        echo \"[laravel-init] Last error output:\"
+        php /var/www/html/artisan db:show 2>&1 || true
+        exit 1
+    "
+}
+
+foreground { s6-echo "[laravel-init] Clearing config..." }
+foreground { s6-setuidgid www-data php /var/www/html/artisan config:clear }
+
+foreground { s6-echo "[laravel-init] Running migrations..." }
+foreground { s6-setuidgid www-data php /var/www/html/artisan migrate --force }
+
+foreground { s6-echo "[laravel-init] Caching config..." }
+foreground { s6-setuidgid www-data php /var/www/html/artisan config:cache }
+
+foreground { s6-echo "[laravel-init] Caching routes..." }
+foreground { s6-setuidgid www-data php /var/www/html/artisan route:cache }
+
+foreground { s6-echo "[laravel-init] Caching views..." }
+foreground { s6-setuidgid www-data php /var/www/html/artisan view:cache }
+
+foreground { s6-echo "[laravel-init] Caching events..." }
+foreground { s6-setuidgid www-data php /var/www/html/artisan event:cache }
+
+s6-echo "[laravel-init] Initialization complete"

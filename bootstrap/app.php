@@ -18,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
             '/*/webhook', // Telegram webhook
         ]);
 
+        $middleware->trustProxies(at: [
+            'nginx',
+            '172.18.0.0/16',
+        ]);
+
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
         $middleware->web(append: [
